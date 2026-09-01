@@ -34,3 +34,10 @@ it('rejects malformed URLs before initializing the SDK', () => {
   for (const value of ['https://', 'https://[invalid', 'javascript:alert(1)', 'https://user:pass@example.com']) expect(validSupabaseUrl(value)).toBe(false)
   expect(validSupabaseUrl('https://project.supabase.co')).toBe(true)
 })
+
+it('distinguishes email quota from request throttling', () => {
+  const message = friendlyError({ code: 'over_email_send_rate_limit', status: 429 })
+  expect(message).toContain('limite de envio de e-mails')
+  expect(message).not.toContain('alguns minutos')
+  expect(friendlyError({ code: 'over_request_rate_limit', status: 429 })).toContain('Muitas tentativas')
+})

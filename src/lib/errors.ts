@@ -7,7 +7,8 @@ export function friendlyError(error: unknown): string {
     case 'user_already_exists': case 'email_exists': return 'Este e-mail já está cadastrado. Entre na sua conta ou recupere sua senha.'
     case 'weak_password': return 'Escolha uma senha mais forte, com pelo menos 8 caracteres.'
     case 'same_password': return 'Escolha uma senha diferente da atual.'
-    case 'over_email_send_rate_limit': case 'over_request_rate_limit': return 'Muitas tentativas. Aguarde alguns minutos e tente novamente.'
+    case 'over_email_send_rate_limit': return 'O limite de envio de e-mails do serviço foi atingido. Não foi possível enviar um novo link. Tente mais tarde; se persistir, entre em contato com o responsável pelo site.'
+    case 'over_request_rate_limit': return 'Muitas tentativas. Aguarde alguns minutos e tente novamente.'
     case 'otp_expired': return 'Este link expirou. Solicite um novo link.'
     case 'session_not_found': case 'refresh_token_not_found': return 'Sua sessão expirou. Entre novamente.'
   }

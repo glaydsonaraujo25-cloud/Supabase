@@ -11,7 +11,7 @@ export function useStudy() {
     let active = true; setLoading(true); setError(''); setCourses([]); setTasks([])
     if (!id) { setLoading(false); return }
     Promise.all([
-      client().from('courses').select('*').eq('user_id', id).order('created_at', { ascending: false }),
+      client().from('study_courses').select('*').eq('user_id', id).order('created_at', { ascending: false }),
       client().from('tasks').select('*').eq('user_id', id).order('created_at', { ascending: false }),
     ]).then(([c, t]) => {
       if (!active) return

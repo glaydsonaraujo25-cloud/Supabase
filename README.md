@@ -141,3 +141,18 @@ O SQL `supabase/study_setup.sql` já foi aplicado ao projeto conectado pela migr
 As tabelas `courses` e `tasks` têm RLS em todas as operações, grants explícitos e índices por proprietário. O cliente não pode alterar IDs, proprietários ou timestamps. A chave estrangeira composta impede vincular uma tarefa ao curso de outra pessoa. O teste `supabase/tests/study_access.sql` verifica CRUD, isolamento, vínculo entre proprietários, cascata e bloqueio de visitantes numa transação com rollback.
 
 Validação desta etapa: 32 testes automatizados aprovados, TypeScript e build de produção aprovados; teste de isolamento executado no Supabase. Testes de interface usam DOM simulado; a inspeção visual em navegador não foi executada por indisponibilidade do navegador neste ambiente. Anotações e certificados ficam para a próxima etapa.
+
+## Página do curso: módulos, aulas e anotações
+
+Clique no nome de um curso em `/courses` para abrir `/courses/:courseId`.
+
+- Crie, edite e exclua módulos e aulas. O campo Ordem define a sequência; empates seguem a criação.
+- Marque aulas como concluídas ou reabra-as.
+- Em Preferências do curso, ative o progresso automático. Ele corresponde a aulas concluídas / total de aulas; sem aulas, é 0%. O modo manual continua disponível e seu valor é preservado.
+- Registre a descrição do curso e anotações privadas com título e conteúdo em texto simples.
+- Consulte as tarefas vinculadas na mesma página.
+- Excluir um módulo remove suas aulas; excluir o curso remove módulos, aulas, anotações e tarefas. A interface pede confirmação.
+
+Aplique `supabase/course_details_setup.sql` uma única vez após `study_setup.sql` em um novo projeto. Já aplicado no projeto conectado. A view `study_courses` usa `security_invoker=true`, respeita RLS e calcula o progresso no momento da consulta, inclusive nas listas e no dashboard. A tabela `courses.progress` guarda apenas o percentual manual. As chaves estrangeiras compostas garantem que curso, módulo, aula e proprietário sejam consistentes. Visitantes não têm permissão de leitura e usuários não podem alterar proprietários, IDs ou vínculos existentes.
+
+Validação: 39 testes, TypeScript e build aprovados. `supabase/tests/course_details_access.sql` executado com rollback comprova cálculo automático, retorno ao manual, isolamento de proprietários, vínculo protegido e exclusão em cascata. Interface verificada em DOM simulado; sem inspeção visual de navegador real nesta entrega. O advisory de proteção contra senhas vazadas continua sendo uma configuração de Auth: https://supabase.com/docs/guides/auth/password-security#password-strength-and-leaked-password-protection

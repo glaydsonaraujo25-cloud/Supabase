@@ -1,4 +1,4 @@
-export interface Course { id: string; user_id: string; title: string; institution: string; hours: number; url: string | null; progress: number; created_at: string }
+export interface Course { description?: string; auto_progress?: boolean; manual_progress?: number; id: string; user_id: string; title: string; institution: string; hours: number; url: string | null; progress: number; created_at: string }
 export interface Task { id: string; user_id: string; course_id: string | null; title: string; due_date: string | null; priority: 'low' | 'medium' | 'high'; status: 'pending' | 'doing' | 'done'; created_at: string }
 export const taskStatuses = { pending: 'Pendente', doing: 'Em andamento', done: 'Concluída' }
 export const priorities = { low: 'Baixa', medium: 'Média', high: 'Alta' }

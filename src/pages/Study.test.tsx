@@ -22,7 +22,7 @@ it('creates a course with the current owner and normalized fields', async () => 
 })
 it('edits a course without overwriting its owner', async () => {
   show('courses'); fireEvent.click(screen.getByLabelText('Editar Python'))
-  fireEvent.change(screen.getByLabelText('Progresso (%)'), { target: { value: '100' } })
+  fireEvent.change(screen.getByLabelText('Progresso manual (%)'), { target: { value: '100' } })
   fireEvent.click(screen.getByText('Salvar curso'))
   await screen.findByText('Curso salvo com sucesso.')
   expect(mocks.update).toHaveBeenCalledWith(expect.objectContaining({ progress: 100 }))
@@ -31,7 +31,7 @@ it('edits a course without overwriting its owner', async () => {
 it('requires explicit confirmation before deleting a course and its tasks', async () => {
   show('courses'); fireEvent.click(screen.getByLabelText('Excluir Python'))
   expect(mocks.remove).not.toHaveBeenCalled()
-  expect(screen.getByText(/As tarefas vinculadas também/)).toBeTruthy()
+  expect(screen.getByText(/As tarefas, módulos/)).toBeTruthy()
   fireEvent.click(screen.getByText('Confirmar exclusão'))
   await screen.findByText('Curso e tarefas vinculadas excluídos.')
   expect(mocks.remove).toHaveBeenCalledOnce()

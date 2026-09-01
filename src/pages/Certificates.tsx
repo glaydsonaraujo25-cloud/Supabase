@@ -1,3 +1,5 @@
+import { Pagination, usePagination } from '../components/Pagination'
+import { loadOwned } from '../lib/loadOwned'
 import { certificatesCsv, downloadText } from '../lib/exports'
 import { useEffect, useState, type FormEvent } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
@@ -27,14 +29,15 @@ export default function Certificates() {
  const [file,setFile]=useState<File|null>(null);const [busy,setBusy]=useState(false);const [error,setError]=useState('');const [success,setSuccess]=useState('')
  const [query,setQuery]=useState('');const [courseFilter,setCourseFilter]=useState(params.get('course')??'all')
  useEffect(()=>{
-  let active=true;setLoading(true);setLoadError('')
-  Promise.all([client().from('certificates').select('*').eq('user_id',owner).order('created_at',{ascending:false}),client().from('study_courses').select('*').eq('user_id',owner).order('title')]).then(([c,k])=>{
-   if(!active)return;if(c.error||k.error)throw c.error??k.error;setRecords(c.data);setCourses(k.data)
+  const controller=new AbortController();let active=true;setLoading(true);setLoadError('')
+  Promise.all([loadOwned<Certificate>('certificates',owner,controller.signal),loadOwned<Course>('study_courses',owner,controller.signal)]).then(([c,k])=>{
+   if(!active)return;setRecords(c.sort((a,b)=>b.created_at.localeCompare(a.created_at)));setCourses(k.sort((a,b)=>a.title.localeCompare(b.title,'pt-BR')))
   }).catch(e=>{if(active)setLoadError(friendlyError(e))}).finally(()=>{if(active)setLoading(false)})
-  return ()=>{active=false}
+  return ()=>{active=false;controller.abort()}
  },[owner,revision])
  const current=editing&&editing!=='new'?editing:null
  const shown=records.filter(c=>(courseFilter==='all'||c.course_id===courseFilter||(courseFilter==='none'&&!c.course_id))&&`${c.title} ${c.institution}`.toLocaleLowerCase('pt-BR').includes(query.toLocaleLowerCase('pt-BR')))
+ const pagination = usePagination(shown, JSON.stringify([query,courseFilter]))
  function start(value: Certificate|'new') {setEditing(value);setFile(null);setDeleting(null);setPreview(null);setError('');setSuccess('')}
  async function save(event: FormEvent<HTMLFormElement>) {
   event.preventDefault();if(busy)return;const data=new FormData(event.currentTarget)
@@ -59,6 +62,7 @@ export default function Certificates() {
  {preview&&<FilePreview key={preview.id} certificate={preview} onClose={()=>setPreview(null)}/>}
  <button className="secondary" disabled={busy||loading||!!loadError||!shown.length} onClick={()=>{try{downloadText(certificatesCsv(shown,courses),'certificados.csv');setSuccess('Download solicitado com os resultados filtrados.')}catch{setError('Não foi possível gerar o relatório. Tente novamente.')}}}>Exportar resultados (CSV)</button>
  <div className="filters"><Field label="Buscar certificados" value={query} type="search" onChange={e=>setQuery(e.target.value)}/><label className="field">Filtrar por curso<select value={courseFilter} onChange={e=>setCourseFilter(e.target.value)}><option value="all">Todos os cursos</option><option value="none">Sem curso vinculado</option>{courses.map(c=><option key={c.id} value={c.id}>{c.title}</option>)}</select></label></div>
- {loading?<Loading/>:!loadError&&(shown.length?<><p>{shown.length} certificado(s) · {shown.reduce((sum,c)=>sum+Number(c.hours),0)} horas registradas</p><ul className="study-list">{shown.map(c=><li key={c.id}><div className="record-main"><div><h2>{c.title}</h2><p>{c.institution||'Instituição não informada'} · {c.hours} h{c.issued_on?` · ${displayDate(c.issued_on)}`:''}</p>{c.course_id&&<Link to={`/courses/${c.course_id}`}>{courses.find(k=>k.id===c.course_id)?.title??'Abrir curso'}</Link>}<p>{c.file_name} · {(c.file_size/1024/1024).toFixed(1)} MB</p></div></div><div className="certificate-actions"><button className="text-button" disabled={busy} onClick={()=>{setPreview(c);setEditing(null);setDeleting(null)}}>Visualizar / baixar</button><button className="text-button" disabled={busy} aria-label={`Editar certificado ${c.title}`} onClick={()=>start(c)}>Editar</button><button className="text-button danger" disabled={busy} aria-label={`Excluir certificado ${c.title}`} onClick={()=>{setDeleting(c);setEditing(null)}}>Excluir</button></div></li>)}</ul></>:<div className="empty"><h2>{records.length?'Nenhum certificado encontrado.':'Sua próxima conquista tem lugar aqui.'}</h2><p>{records.length?'Ajuste a busca ou o filtro de cursos.':'Adicione seu primeiro certificado em PDF ou imagem.'}</p></div>)}
+ {loading?<Loading/>:!loadError&&(shown.length?<><p>{shown.length} certificado(s) · {shown.reduce((sum,c)=>sum+Number(c.hours),0)} horas registradas</p><ul className="study-list">{pagination.items.map(c=><li key={c.id}><div className="record-main"><div><h2>{c.title}</h2><p>{c.institution||'Instituição não informada'} · {c.hours} h{c.issued_on?` · ${displayDate(c.issued_on)}`:''}</p>{c.course_id&&<Link to={`/courses/${c.course_id}`}>{courses.find(k=>k.id===c.course_id)?.title??'Abrir curso'}</Link>}<p>{c.file_name} · {(c.file_size/1024/1024).toFixed(1)} MB</p></div></div><div className="certificate-actions"><button className="text-button" disabled={busy} onClick={()=>{setPreview(c);setEditing(null);setDeleting(null)}}>Visualizar / baixar</button><button className="text-button" disabled={busy} aria-label={`Editar certificado ${c.title}`} onClick={()=>start(c)}>Editar</button><button className="text-button danger" disabled={busy} aria-label={`Excluir certificado ${c.title}`} onClick={()=>{setDeleting(c);setEditing(null)}}>Excluir</button></div></li>)}</ul></>:<div className="empty"><h2>{records.length?'Nenhum certificado encontrado.':'Sua próxima conquista tem lugar aqui.'}</h2><p>{records.length?'Ajuste a busca ou o filtro de cursos.':'Adicione seu primeiro certificado em PDF ou imagem.'}</p></div>)}
+ {!loading&&!loadError&&<Pagination {...pagination}/>}
  </section>
 }

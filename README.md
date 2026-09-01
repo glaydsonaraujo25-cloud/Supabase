@@ -196,4 +196,10 @@ Use **Exportar resultados (CSV)** em Cursos, Tarefas ou Certificados. O arquivo 
 
 No Calendário, **Exportar prazos (ICS)** baixa as tarefas pendentes com data da visualização atual. Cada prazo vira um evento de dia inteiro, no formato [iCalendar RFC 5545](https://www.rfc-editor.org/rfc/rfc5545). Importe o arquivo usando a opção de importação de seu calendário. É uma cópia pontual: alterações posteriores e exclusões no app não atualizam o calendário externo. Reimportações podem duplicar eventos conforme o serviço utilizado.
 
-As exportações são geradas no navegador com os registros já carregados para a conta atual. Respeitam o limite de resultados configurado na API; não constituem backup completo da conta. Não exigem novas tabelas, permissões ou credenciais. A proteção das rotas e as policies existentes continuam valendo.
+As exportações são geradas no navegador com os registros já carregados para a conta atual. As listas de cursos, tarefas e certificados percorrem lotes por ID até o fim, sem parar no limite de uma resposta da API. A exportação inclui todos os resultados filtrados carregados, mesmo quando a tela exibe apenas 20 por página. Não constitui backup transacional da conta: alterações simultâneas durante a leitura podem aparecer apenas após atualizar a página. Não exigem novas tabelas, permissões ou credenciais. A proteção das rotas e as policies existentes continuam valendo.
+
+## Revisão de listas e responsividade
+
+Cursos, tarefas, certificados e calendário exibem 20 resultados por página. Mudar filtros retorna à primeira página. Falhas em qualquer lote interrompem o carregamento e bloqueiam exportações parciais. Consultas são canceladas ao sair da tela. Os testes cobrem respostas menores que o limite solicitado, interrupção, erros e mudança de filtros.
+
+Atalhos, ações e arquivos longos receberam ajustes para telas pequenas; ações de editar/excluir têm alvos de toque maiores.

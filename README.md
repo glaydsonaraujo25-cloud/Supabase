@@ -1,4 +1,4 @@
-# Minha conta · React + Supabase
+# Meus estudos · React + Supabase
 
 Aplicação de estudo com cadastro, autenticação real, perfil privado e upload de avatar. Interface minimalista em português, responsiva e navegável por teclado. Não possui backend próprio.
 
@@ -126,3 +126,18 @@ Também foram verificadas no banco as policies de leitura e inserção de Storag
 16 testes automatizados cobrem validações, URLs inválidas, erros de login após links expirados, proteção das rotas privadas, imagem indisponível, troca de avatar, falhas de rede e compatibilidade de decodificação. Os testes de interface usam DOM simulado e os de salvamento usam respostas simuladas do Supabase; não substituem o teste de e-mails e do site publicado.
 
 O cadastro interrompe o fluxo e bloqueia reenvios para o mesmo e-mail quando Auth retorna `user_already_exists`, `email_exists` ou uma resposta sem sessão com `identities: []`. A tela oferece login e recuperação; outro e-mail libera nova tentativa. Contas ainda não confirmadas podem receber novamente as instruções de confirmação conforme o comportamento do Supabase. Não é feita consulta pública à tabela de usuários.
+
+## Central de estudos — primeira etapa
+
+- `/courses`: criar, editar e excluir cursos; instituição, carga horária, link, progresso, busca e filtro de status.
+- `/tasks`: tarefas independentes ou vinculadas a cursos; prazo, prioridade, status, conclusão/reabertura, edição, exclusão e busca.
+- `/dashboard`: cursos em andamento, tarefas pendentes, progresso médio dos cursos e próximos prazos (inclui atrasados).
+- Navegação responsiva entre Resumo, Cursos, Tarefas e Perfil.
+
+O progresso do curso é informado manualmente; concluir tarefas não muda esse percentual. Excluir um curso também exclui suas tarefas, com confirmação explícita na interface. Datas de prazo seguem o calendário local, sem deslocamento por UTC.
+
+O SQL `supabase/study_setup.sql` já foi aplicado ao projeto conectado pela migração remota `study_courses_and_tasks`. Para reproduzir em outro projeto, execute-o uma única vez no SQL Editor após configurar o esquema de perfis. O arquivo de setup foi mantido separado porque o CLI não pôde executar neste ambiente.
+
+As tabelas `courses` e `tasks` têm RLS em todas as operações, grants explícitos e índices por proprietário. O cliente não pode alterar IDs, proprietários ou timestamps. A chave estrangeira composta impede vincular uma tarefa ao curso de outra pessoa. O teste `supabase/tests/study_access.sql` verifica CRUD, isolamento, vínculo entre proprietários, cascata e bloqueio de visitantes numa transação com rollback.
+
+Validação desta etapa: 32 testes automatizados aprovados, TypeScript e build de produção aprovados; teste de isolamento executado no Supabase. Testes de interface usam DOM simulado; a inspeção visual em navegador não foi executada por indisponibilidade do navegador neste ambiente. Anotações e certificados ficam para a próxima etapa.

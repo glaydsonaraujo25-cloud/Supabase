@@ -174,3 +174,18 @@ A sitekey pública fornecida para este projeto está em `src/components/Captcha.
 Referência: https://supabase.com/docs/guides/auth/auth-captcha
 
 44 testes automatizados e build aprovados. Os desafios são simulados nos testes; a validação real de hCaptcha e Supabase depende da ativação no painel e de um teste humano. CAPTCHA não remove limites de envio de e-mails nem substitui SMTP.
+
+## Certificados privados e calendário
+
+- `/certificates`: upload de PDF, JPG, PNG e WebP até 10 MB; título, instituição, horas, emissão e curso opcional; busca, edição, visualização, download e exclusão confirmada.
+- `/calendar`: calendário mensal com tarefas por dia, hoje, semana, atrasadas ou sem prazo; conclusão e reagendamento. “Nova tarefa” já preenche o dia selecionado.
+- As duas rotas exigem sessão. Os arquivos usam um bucket **privado** e download autenticado, sem URL pública. RLS restringe registros e caminhos ao usuário proprietário. Vincular certificados a cursos de outra conta é bloqueado pela chave estrangeira composta.
+- Excluir um curso preserva seus certificados e remove apenas o vínculo. Para trocar o arquivo, adicione o novo certificado antes de excluir o antigo.
+
+Em outro projeto Supabase, execute `supabase/certificates_setup.sql` uma vez no **SQL Editor**, depois dos scripts de cursos. O calendário usa a tabela `tasks` existente. Não há novas variáveis de ambiente.
+
+Execute `supabase/tests/certificates_access.sql` no SQL Editor para verificar isolamento entre duas contas, acesso anônimo, caminhos privados e preservação após excluir um curso. Os registros de teste são revertidos ao final. `npm test` também verifica datas, limites de upload, falhas de rede e rotas protegidas.
+
+Upload e metadados não formam uma transação única: em uma falha de rede ambígua, o arquivo enviado é preservado para evitar apagar um upload já associado a um registro. Podem existir arquivos privados órfãos; sua limpeza administrativa deve confirmar antes que não há registro associado. Uma falha de limpeza após excluir um registro é informada na tela.
+
+A prévia de PDF depende do suporte do navegador; o download permanece disponível. Build, testes automatizados e policies foram verificados; esta atualização não teve teste visual em navegador real neste ambiente.

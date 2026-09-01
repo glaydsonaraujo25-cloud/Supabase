@@ -83,3 +83,4 @@ input[type=file],select{max-width:100%;min-width:0}
 .record-main input[type=checkbox]{flex-shrink:0}.record-main>div{min-width:0}
 .pagination{display:flex;justify-content:center;align-items:center;gap:16px;margin:24px 0}.pagination span{font-size:13px}
 @media(max-width:600px){.study-list li{flex-wrap:wrap}.certificate-actions{width:100%}.row-actions .text-button{min-width:44px;min-height:44px;justify-content:center}.record-main{flex:1 1 180px}.calendar-toolbar h2{flex-basis:50%}.pagination{gap:8px}.pagination span{flex:1;text-align:center}.pagination .secondary{padding:10px}.account-top{gap:12px;flex-wrap:wrap}}
+.focus-clock{padding:24px 0;margin:24px 0;border-block:1px solid #e7ede9}.focus-clock output{display:block;font-size:clamp(36px,9vw,56px);font-variant-numeric:tabular-nums;margin:18px 0}.goal-form{max-width:360px;margin:20px 0 36px}.weekly-progress{width:min(100%,480px);height:12px}

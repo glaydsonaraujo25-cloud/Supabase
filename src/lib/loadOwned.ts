@@ -1,6 +1,6 @@
 import { client } from './supabase'
 /** Keyset pagination keeps reading even when the server caps a batch below 500 rows. */
-export async function loadOwned<T extends { id: string }>(table: 'study_courses' | 'tasks' | 'certificates', owner: string, signal?: AbortSignal): Promise<T[]> {
+export async function loadOwned<T extends { id: string }>(table: 'study_courses' | 'tasks' | 'certificates' | 'study_sessions', owner: string, signal?: AbortSignal): Promise<T[]> {
  const rows: T[] = []
  let lastId: string | undefined
  while (true) {

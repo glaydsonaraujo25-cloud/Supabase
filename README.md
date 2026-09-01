@@ -203,3 +203,15 @@ As exportações são geradas no navegador com os registros já carregados para 
 Cursos, tarefas, certificados e calendário exibem 20 resultados por página. Mudar filtros retorna à primeira página. Falhas em qualquer lote interrompem o carregamento e bloqueiam exportações parciais. Consultas são canceladas ao sair da tela. Os testes cobrem respostas menores que o limite solicitado, interrupção, erros e mudança de filtros.
 
 Atalhos, ações e arquivos longos receberam ajustes para telas pequenas; ações de editar/excluir têm alvos de toque maiores.
+
+## Meu ritmo: metas e sessões
+
+A rota protegida `/focus` reúne cronômetro com pausa, registro manual de sessões, meta semanal em horas, progresso e totais das últimas quatro semanas. O histórico tem filtros por curso, paginação e exclusão confirmada. As semanas vão de segunda a domingo, usando a data local escolhida para cada registro. A meta atual se repete semanalmente; não há histórico de metas anteriores.
+
+Para outro projeto Supabase, execute `supabase/focus_setup.sql` uma vez no SQL Editor após os scripts de cursos. `study_sessions` e `study_goals` usam RLS por proprietário. A chave estrangeira composta impede vincular sessões a cursos de outra conta. Excluir um curso preserva as sessões sem o vínculo. Rode `supabase/tests/focus_access.sql` para verificar policies e validações com rollback.
+
+O cronômetro usa timestamps, sem depender da precisão de intervalos em segundo plano. Seu rascunho fica em sessionStorage, separado por usuário, nesta aba; não sincroniza entre dispositivos e pode ser perdido ao fechar a aba ou limpar o navegador. Se o armazenamento local estiver indisponível, funciona enquanto a tela permanecer aberta. O formulário deve ser salvo para contabilizar minutos completos no histórico (1 a 720 por sessão). Confira a data em sessões que atravessam a meia-noite. Os campos do formulário não são persistidos antes do salvamento.
+
+Tentativas repetidas de salvar o mesmo formulário reutilizam o ID durante a permanência na tela para evitar duplicação após uma resposta de rede perdida. Após recarregar, confira o histórico antes de repetir um envio. Para corrigir uma sessão já salva, exclua-a com confirmação e registre novamente.
+
+Validação: build TypeScript/Vite, testes de formulário, cronômetro, semana e isolamento no banco. A revisão em navegador real continua pendente neste ambiente. Lembretes, tarefas recorrentes, tema escuro e limpeza administrativa de arquivos órfãos ficam para etapas seguintes.

@@ -29,7 +29,7 @@ it('shows login errors after arriving through an expired link', async () => {
   fireEvent.click(screen.getByRole('button', { name: 'Entrar' }))
   expect(await screen.findByText('E-mail ou senha incorretos.')).toBeTruthy()
 })
-it.each(['/dashboard', '/profile', '/courses', '/tasks', '/courses/private-id', '/certificates', '/calendar'])('protects %s when there is no session', async path => {
+it.each(['/dashboard', '/profile', '/courses', '/tasks', '/courses/private-id', '/certificates', '/calendar', '/focus'])('protects %s when there is no session', async path => {
   vi.stubGlobal('scrollTo', vi.fn())
   render(<MemoryRouter initialEntries={[path]}><App/></MemoryRouter>)
   expect(await screen.findByRole('button', { name: 'Entrar' })).toBeTruthy()

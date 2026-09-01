@@ -16,5 +16,6 @@ export function Submit({ busy, children }: { busy: boolean; children: ReactNode 
 }
 export function Loading() { return <p className="loading" role="status"><LoaderCircle className="spin" size={22}/> Carregando…</p> }
 export function Avatar({ src, name }: { src?: string | null; name: string }) {
-  return <div className="avatar">{src ? <img src={src} alt={`Foto de ${name}`} onError={e => { e.currentTarget.style.display = 'none' }}/>: <UserRound size={36}/>}</div>
+  const [failedSrc, setFailedSrc] = useState<string | null>(null)
+  return <div className="avatar">{src && src !== failedSrc ? <img src={src} alt={`Foto de ${name}`} onError={() => setFailedSrc(src)}/>: <UserRound size={36}/>}</div>
 }

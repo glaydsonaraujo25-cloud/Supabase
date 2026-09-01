@@ -28,3 +28,9 @@ describe('client validation boundaries', () => {
     expect(friendlyError({ code: 'invalid_credentials' })).toBe('E-mail ou senha incorretos.')
   })
 })
+
+import { validSupabaseUrl } from './validation'
+it('rejects malformed URLs before initializing the SDK', () => {
+  for (const value of ['https://', 'https://[invalid', 'javascript:alert(1)', 'https://user:pass@example.com']) expect(validSupabaseUrl(value)).toBe(false)
+  expect(validSupabaseUrl('https://project.supabase.co')).toBe(true)
+})

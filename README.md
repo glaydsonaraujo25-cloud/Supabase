@@ -69,7 +69,7 @@ A migração já foi aplicada ao projeto conectado durante a implementação. O 
 - Bucket `avatars` é **privado**, limitado a 2 MB e JPG/PNG/WebP.
 - Cada arquivo usa `userId/uuid.ext`. Policies de Storage verificam o primeiro diretório tanto na leitura quanto na escrita/exclusão.
 - `avatar_url` armazena o **caminho**, não uma URL pública. O cliente baixa a imagem autenticado e cria uma URL local temporária, revogada ao desmontar.
-- A foto anterior só é removida após salvar o perfil; se a atualização falhar, tenta-se remover o novo upload. Falhas de conexão na limpeza podem deixar arquivos órfãos, sem tornar o bucket público.
+- A foto anterior só é removida após salvar o perfil; se a resposta da atualização falhar, o novo upload é preservado, pois o servidor pode já ter confirmado a alteração. Isso evita apagar a foto em uso. Falhas podem deixar arquivos órfãos privados para limpeza posterior.
 - SVG não é aceito. Antes do upload, o navegador tenta decodificar a imagem.
 - O frontend não é a barreira de segurança: RLS e grants protegem requisições diretas à API.
 
@@ -120,3 +120,7 @@ supabase/migrations/ # Banco, triggers, grants e policies
 Build e testes unitários foram executados. O isolamento de perfis foi verificado no banco com duas identidades temporárias dentro de uma transação revertida: trigger, leitura e atualização próprias, bloqueio de atualização alheia e de alteração de ID. Nenhum usuário de teste dessa transação permanece. O recebimento de e-mails e o ciclo completo com uma caixa postal real precisam ser validados após configurar domínio e SMTP.
 
 Também foram verificadas no banco as policies de leitura e inserção de Storage entre duas identidades, com rollback. A revisão visual automatizada não pôde ser executada neste ambiente porque o download do navegador foi bloqueado pela rede.
+
+## Revisão funcional
+
+16 testes automatizados cobrem validações, URLs inválidas, erros de login após links expirados, proteção das rotas privadas, imagem indisponível, troca de avatar, falhas de rede e compatibilidade de decodificação. Os testes de interface usam DOM simulado e os de salvamento usam respostas simuladas do Supabase; não substituem o teste de e-mails e do site publicado.

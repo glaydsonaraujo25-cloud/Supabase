@@ -13,3 +13,7 @@ export function isPublicKey(key: string) {
   if (key.startsWith('sb_publishable_')) return true
   try { return JSON.parse(atob(key.split('.')[1].replace(/-/g, '+').replace(/_/g, '/'))).role === 'anon' } catch { return false }
 }
+
+export function validSupabaseUrl(value: string) {
+  try { const url = new URL(value); return ['https:', 'http:'].includes(url.protocol) && !!url.hostname && !url.username && !url.password } catch { return false }
+}

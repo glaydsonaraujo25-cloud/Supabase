@@ -212,7 +212,7 @@ Para outro projeto Supabase, execute `supabase/focus_setup.sql` uma vez no SQL E
 
 O cronômetro usa timestamps, sem depender da precisão de intervalos em segundo plano. Seu rascunho fica em sessionStorage, separado por usuário, nesta aba; não sincroniza entre dispositivos e pode ser perdido ao fechar a aba ou limpar o navegador. Se o armazenamento local estiver indisponível, funciona enquanto a tela permanecer aberta. O formulário deve ser salvo para contabilizar minutos completos no histórico (1 a 720 por sessão). Confira a data em sessões que atravessam a meia-noite. Os campos do formulário não são persistidos antes do salvamento.
 
-Tentativas repetidas de salvar o mesmo formulário reutilizam o ID durante a permanência na tela para evitar duplicação após uma resposta de rede perdida. Após recarregar, confira o histórico antes de repetir um envio. Para corrigir uma sessão já salva, exclua-a com confirmação e registre novamente.
+Tentativas repetidas de salvar o mesmo formulário reutilizam o ID durante a permanência na tela para evitar duplicação após uma resposta de rede perdida. Após recarregar, confira o histórico antes de repetir um envio. Para corrigir uma sessão salva, use Editar no histórico; a alteração recalcula os totais.
 
 Validação: build TypeScript/Vite, testes de formulário, cronômetro, semana e isolamento no banco. A revisão em navegador real continua pendente neste ambiente. Lembretes, tarefas recorrentes, tema escuro e limpeza administrativa de arquivos órfãos ficam para etapas seguintes.
 
@@ -221,3 +221,15 @@ Validação: build TypeScript/Vite, testes de formulário, cronômetro, semana e
 No cabeçalho, ao lado do menu, escolha Claro, Escuro ou Automático. Claro é o padrão; Automático acompanha a preferência do sistema. A seleção é salva em `localStorage` neste navegador e sincronizada entre abas, sem gravar dados de conta. Se o navegador bloquear esse armazenamento, a mudança ainda funciona na página atual. A preferência é aplicada antes da montagem do React. O hCaptcha mantém seu próprio tema claro; PDFs e imagens preservam as cores originais.
 
 Os testes verificam persistência, modo automático, sincronização entre abas e armazenamento bloqueado. Os estilos escuros cobrem formulários, mensagens, calendário, sessões e navegação; a conferência visual em navegador real permanece pendente.
+
+## Recorrência, lembretes e edição
+
+Em Tarefas, escolha repetição diária ou semanal e informe o prazo. Ao salvar ou marcar uma tarefa como concluída, a próxima ocorrência é criada atomicamente no banco, com prazo igual ao anterior mais 1 ou 7 dias. Uma ocorrência gera no máximo uma sucessora; reabri-la não remove nem duplica a sucessora. Alterações no título, curso, prioridade ou repetição de uma ocorrência já concluída não modificam tarefas futuras já criadas. Para encerrar uma sequência, altere a próxima tarefa pendente para Não repetir. Prazos antigos avançam um intervalo por conclusão, sem pular automaticamente para hoje.
+
+O Resumo mostra contagens de tarefas atrasadas, de hoje e de amanhã. Esses lembretes são exibidos dentro do app, sem e-mail ou notificação externa. A data é atualizada enquanto a tela fica aberta; os dados refletem o último carregamento.
+
+Em Meu ritmo, use Editar para corrigir data, minutos, curso e anotação. O histórico e as estatísticas são recalculados após salvar.
+
+Para instalar em outro projeto, execute `supabase/recurring_tasks_setup.sql` depois de `focus_setup.sql`. O trigger roda com permissões do usuário e mantém RLS. A coluna interna que impede duplicatas não pode ser alterada pelo cliente. O teste `supabase/tests/recurrence_access.sql` verifica recorrência, reabertura, datas e isolamento da edição.
+
+A tentativa de instalar o navegador para revisão visual voltou a falhar por erro de certificado TLS no download. Portanto, revisão visual e testes completos em navegador, importação em serviços externos, limpeza de arquivos órfãos e sincronização do cronômetro entre dispositivos continuam pendentes.

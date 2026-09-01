@@ -110,3 +110,4 @@ input[type=file],select{max-width:100%;min-width:0}
 header .theme-picker{margin:0 0 0 auto;flex-shrink:0;gap:8px;font-size:12px}header .theme-picker select{font-size:12px;max-width:130px}header .brand{flex-shrink:0}header nav{flex:1;gap:2px}header nav a{padding-inline:8px}
 @media(max-width:1000px){header nav{order:3;flex-basis:100%;justify-content:flex-start}header .theme-picker{margin-left:auto}}
 @media(max-width:420px){header .theme-picker{flex-direction:column;align-items:flex-start;gap:4px}header .theme-picker select{max-width:120px}header{gap:12px}}
+.storage-cleanup{margin-top:40px;padding-top:24px;border-top:1px solid #dce3e0}.cleanup-list{list-style:none;padding:0}.cleanup-list li{padding:8px 0;overflow-wrap:anywhere}.cleanup-list .check-label{align-items:flex-start}.focus-clock form{max-width:520px;margin-top:20px}[data-theme=dark] .storage-cleanup{border-color:var(--dark-border)}

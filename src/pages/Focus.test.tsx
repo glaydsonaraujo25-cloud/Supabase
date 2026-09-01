@@ -6,6 +6,7 @@ vi.mock('../contexts/AuthContext',()=>({useAuth:()=>({session:{user:{id:'owner'}
 vi.mock('../hooks/useStudy',()=>({useStudy:()=>({courses:[],tasks:[],loading:false,error:'',reload:vi.fn()})}))
 vi.mock('../lib/loadOwned',()=>({loadOwned:async()=>mocks.rows}))
 vi.mock('../lib/supabase',()=>({client:()=>({from:()=>{const q={update:(v:unknown)=>{mocks.update(v);return q},select:()=>q,eq:()=>q,abortSignal:()=>q,maybeSingle:async()=>({data:null,error:null}),insert:(v:unknown)=>{mocks.insert(v);return q},upsert:(v:unknown)=>{mocks.upsert(v);return q},single:mocks.single};return q}})}))
+vi.mock('../components/SyncedClock',()=>({SyncedClock:()=>null}))
 import Focus from './Focus'
 beforeEach(()=>{vi.clearAllMocks();mocks.rows=[];sessionStorage.clear();mocks.single.mockResolvedValue({data:{id:'ok'},error:null})})
 afterEach(cleanup)

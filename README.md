@@ -210,11 +210,11 @@ A rota protegida `/focus` reúne cronômetro com pausa, registro manual de sess�
 
 Para outro projeto Supabase, execute `supabase/focus_setup.sql` uma vez no SQL Editor após os scripts de cursos. `study_sessions` e `study_goals` usam RLS por proprietário. A chave estrangeira composta impede vincular sessões a cursos de outra conta. Excluir um curso preserva as sessões sem o vínculo. Rode `supabase/tests/focus_access.sql` para verificar policies e validações com rollback.
 
-O cronômetro usa timestamps, sem depender da precisão de intervalos em segundo plano. Seu rascunho fica em sessionStorage, separado por usuário, nesta aba; não sincroniza entre dispositivos e pode ser perdido ao fechar a aba ou limpar o navegador. Se o armazenamento local estiver indisponível, funciona enquanto a tela permanecer aberta. O formulário deve ser salvo para contabilizar minutos completos no histórico (1 a 720 por sessão). Confira a data em sessões que atravessam a meia-noite. Os campos do formulário não são persistidos antes do salvamento.
+O cronômetro sincronizado guarda seu estado no Supabase, por conta. Cada tela consulta o estado a cada 10 segundos e ao recuperar o foco. Iniciar, pausar, zerar e salvar usam uma versão para detectar alterações de outro dispositivo. O tempo é calculado com referência ao relógio do servidor. Ao salvar, a sessão e o reinício do cronômetro são confirmados na mesma transação; repetir a mesma solicitação não duplica a sessão. É preciso conexão para controlar ou salvar.
 
 Tentativas repetidas de salvar o mesmo formulário reutilizam o ID durante a permanência na tela para evitar duplicação após uma resposta de rede perdida. Após recarregar, confira o histórico antes de repetir um envio. Para corrigir uma sessão salva, use Editar no histórico; a alteração recalcula os totais.
 
-Validação: build TypeScript/Vite, testes de formulário, cronômetro, semana e isolamento no banco. A revisão em navegador real continua pendente neste ambiente. Lembretes, tarefas recorrentes, tema escuro e limpeza administrativa de arquivos órfãos ficam para etapas seguintes.
+Validação: build TypeScript/Vite, testes de formulário, cronômetro, semana e isolamento no banco. A revisão em navegador real continua pendente neste ambiente. Lembretes internos, tarefas recorrentes, tema escuro e limpeza de arquivos sem vínculo estão implementados.
 
 ## Aparência
 
@@ -233,3 +233,21 @@ Em Meu ritmo, use Editar para corrigir data, minutos, curso e anotação. O hist
 Para instalar em outro projeto, execute `supabase/recurring_tasks_setup.sql` depois de `focus_setup.sql`. O trigger roda com permissões do usuário e mantém RLS. A coluna interna que impede duplicatas não pode ser alterada pelo cliente. O teste `supabase/tests/recurrence_access.sql` verifica recorrência, reabertura, datas e isolamento da edição.
 
 A tentativa de instalar o navegador para revisão visual voltou a falhar por erro de certificado TLS no download. Portanto, revisão visual e testes completos em navegador, importação em serviços externos, limpeza de arquivos órfãos e sincronização do cronômetro entre dispositivos continuam pendentes.
+
+## Cronômetro sincronizado e limpeza segura
+
+Execute `supabase/synced_clock_setup.sql` e `supabase/storage_cleanup_setup.sql` uma vez no SQL Editor, após os scripts anteriores. Não há credenciais novas no frontend. RPCs usam permissões do usuário e RLS; não existe acesso ao cronômetro ou aos arquivos de outra conta.
+
+Em Meu ritmo, inicie ou pause o cronômetro. Depois de pausar, preencha a data, curso e anotação e use **Salvar tempo cronometrado**. O registro manual continua separado. Rascunhos do antigo cronômetro em sessionStorage não são importados automaticamente; registre manualmente esse tempo se necessário. Sessões já salvas permanecem no histórico. Mudanças simultâneas exigem atualizar o estado antes de tentar novamente.
+
+Em Perfil, **Limpar arquivos sem uso** lista até 100 arquivos por verificação. Somente caminhos da conta, criados há mais de 24 horas e sem vínculo com perfil/certificado, podem ser reservados para limpeza. Marque os desejados e confirme. A reserva é revalidada no servidor; locks e triggers impedem associar o arquivo depois da reserva. A remoção real usa exclusivamente a API Storage, nunca DELETE na tabela `storage.objects`. Se a remoção falhar, verifique novamente para repetir. Reservas permanecem como proteção contra reutilização do caminho, mesmo após remover o objeto. Não há limpeza automática nem exclusão de arquivos reais durante os testes.
+
+### Verificação desta entrega
+
+- `npm test`: testes automatizados de formulários, permissões simuladas, operações e exportações.
+- `supabase/tests/synced_clock_access.sql`: versão desatualizada, salvamento atômico, repetição sem duplicação e isolamento de contas.
+- `supabase/tests/cleanup_access.sql`: isolamento e bloqueio de vínculos após reserva; sem manipular metadados do Storage.
+- `node scripts/verify-export-import.mjs`: gera CSV/ICS com o código da aplicação e importa em parsers independentes Python (CSV e `icalendar==7.3.0`). Instale essa dependência em um ambiente Python de teste com `python -m pip install icalendar==7.3.0`. O teste cobre acentos, aspas, linhas múltiplas, neutralização de fórmulas e ano bissexto. Não testa a interface do Google Calendar/Excel.
+- Navegador real: tela de login em claro/escuro e navegação para recuperação conferidas. Testes autenticados, confirmação de e-mail, troca final de senha e revisão mobile ainda dependem da conclusão do acesso no navegador de teste. Não foi contornado o CAPTCHA.
+
+Esta seção atualiza as limitações de entregas anteriores descritas acima.

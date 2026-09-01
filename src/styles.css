@@ -105,3 +105,8 @@ input[type=file],select{max-width:100%;min-width:0}
 [data-theme=dark] .skip{background:#1c2923;color:#b8f1d3}
 [data-theme=dark] :focus-visible{outline-color:#9cebc5}
 [data-theme=dark] input[type=checkbox],[data-theme=dark] progress{accent-color:#8bdfb9}
+
+/* Theme preference stays beside the main navigation. */
+header .theme-picker{margin:0 0 0 auto;flex-shrink:0;gap:8px;font-size:12px}header .theme-picker select{font-size:12px;max-width:130px}header .brand{flex-shrink:0}header nav{flex:1;gap:2px}header nav a{padding-inline:8px}
+@media(max-width:1000px){header nav{order:3;flex-basis:100%;justify-content:flex-start}header .theme-picker{margin-left:auto}}
+@media(max-width:420px){header .theme-picker{flex-direction:column;align-items:flex-start;gap:4px}header .theme-picker select{max-width:120px}header{gap:12px}}

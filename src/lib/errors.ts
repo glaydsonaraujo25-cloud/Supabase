@@ -4,7 +4,7 @@ export function friendlyError(error: unknown): string {
   switch (e?.code) {
     case 'invalid_credentials': return 'E-mail ou senha incorretos.'
     case 'email_not_confirmed': return 'Confirme seu e-mail antes de entrar. Verifique também a pasta de spam.'
-    case 'user_already_exists': case 'email_exists': return 'Não foi possível criar a conta. Tente entrar ou recuperar sua senha.'
+    case 'user_already_exists': case 'email_exists': return 'Este e-mail já está cadastrado. Entre na sua conta ou recupere sua senha.'
     case 'weak_password': return 'Escolha uma senha mais forte, com pelo menos 8 caracteres.'
     case 'same_password': return 'Escolha uma senha diferente da atual.'
     case 'over_email_send_rate_limit': case 'over_request_rate_limit': return 'Muitas tentativas. Aguarde alguns minutos e tente novamente.'

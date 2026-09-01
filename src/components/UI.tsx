@@ -11,8 +11,8 @@ export function Password({ label = 'Senha', ...props }: InputHTMLAttributes<HTML
 export function Notice({ children, error = false }: { children: ReactNode; error?: boolean }) {
   return children ? <p className={`notice ${error ? 'error' : ''}`} role={error ? 'alert' : 'status'}>{children}</p> : null
 }
-export function Submit({ busy, children }: { busy: boolean; children: ReactNode }) {
-  return <button className="primary" disabled={busy} type="submit">{busy && <LoaderCircle className="spin" size={18}/>} {busy ? 'Aguarde…' : children}</button>
+export function Submit({ busy, children, disabled = false }: { busy: boolean; children: ReactNode; disabled?: boolean }) {
+  return <button className="primary" disabled={busy || disabled} type="submit">{busy && <LoaderCircle className="spin" size={18}/>} {busy ? 'Aguarde…' : children}</button>
 }
 export function Loading() { return <p className="loading" role="status"><LoaderCircle className="spin" size={22}/> Carregando…</p> }
 export function Avatar({ src, name }: { src?: string | null; name: string }) {

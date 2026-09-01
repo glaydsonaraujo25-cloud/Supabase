@@ -124,3 +124,5 @@ Também foram verificadas no banco as policies de leitura e inserção de Storag
 ## Revisão funcional
 
 16 testes automatizados cobrem validações, URLs inválidas, erros de login após links expirados, proteção das rotas privadas, imagem indisponível, troca de avatar, falhas de rede e compatibilidade de decodificação. Os testes de interface usam DOM simulado e os de salvamento usam respostas simuladas do Supabase; não substituem o teste de e-mails e do site publicado.
+
+O cadastro interrompe o fluxo e bloqueia reenvios para o mesmo e-mail quando Auth retorna `user_already_exists`, `email_exists` ou uma resposta sem sessão com `identities: []`. A tela oferece login e recuperação; outro e-mail libera nova tentativa. Contas ainda não confirmadas podem receber novamente as instruções de confirmação conforme o comportamento do Supabase. Não é feita consulta pública à tabela de usuários.

@@ -215,3 +215,9 @@ O cronômetro usa timestamps, sem depender da precisão de intervalos em segundo
 Tentativas repetidas de salvar o mesmo formulário reutilizam o ID durante a permanência na tela para evitar duplicação após uma resposta de rede perdida. Após recarregar, confira o histórico antes de repetir um envio. Para corrigir uma sessão já salva, exclua-a com confirmação e registre novamente.
 
 Validação: build TypeScript/Vite, testes de formulário, cronômetro, semana e isolamento no banco. A revisão em navegador real continua pendente neste ambiente. Lembretes, tarefas recorrentes, tema escuro e limpeza administrativa de arquivos órfãos ficam para etapas seguintes.
+
+## Aparência
+
+No rodapé, escolha Claro, Escuro ou Automático. Claro é o padrão; Automático acompanha a preferência do sistema. A seleção é salva em `localStorage` neste navegador e sincronizada entre abas, sem gravar dados de conta. Se o navegador bloquear esse armazenamento, a mudança ainda funciona na página atual. A preferência é aplicada antes da montagem do React. O hCaptcha mantém seu próprio tema claro; PDFs e imagens preservam as cores originais.
+
+Os testes verificam persistência, modo automático, sincronização entre abas e armazenamento bloqueado. Os estilos escuros cobrem formulários, mensagens, calendário, sessões e navegação; a conferência visual em navegador real permanece pendente.

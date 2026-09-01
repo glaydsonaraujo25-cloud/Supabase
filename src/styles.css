@@ -84,3 +84,24 @@ input[type=file],select{max-width:100%;min-width:0}
 .pagination{display:flex;justify-content:center;align-items:center;gap:16px;margin:24px 0}.pagination span{font-size:13px}
 @media(max-width:600px){.study-list li{flex-wrap:wrap}.certificate-actions{width:100%}.row-actions .text-button{min-width:44px;min-height:44px;justify-content:center}.record-main{flex:1 1 180px}.calendar-toolbar h2{flex-basis:50%}.pagination{gap:8px}.pagination span{flex:1;text-align:center}.pagination .secondary{padding:10px}.account-top{gap:12px;flex-wrap:wrap}}
 .focus-clock{padding:24px 0;margin:24px 0;border-block:1px solid #e7ede9}.focus-clock output{display:block;font-size:clamp(36px,9vw,56px);font-variant-numeric:tabular-nums;margin:18px 0}.goal-form{max-width:360px;margin:20px 0 36px}.weekly-progress{width:min(100%,480px);height:12px}
+.theme-picker{display:flex;align-items:center;justify-content:center;gap:12px;margin:0 auto 12px;width:fit-content}.theme-picker select{width:auto;margin:0;min-height:44px;padding:8px 12px}footer p{font-size:12px}
+:root[data-theme=dark]{color:#e6eee9;background:#121b18;--dark-surface:#1c2923;--dark-border:#435a4e;--dark-muted:#b3c5ba;--dark-link:#8bdfb9}
+[data-theme=dark] :is(.brand,h1,h2,h3,output){color:#e6eee9}
+[data-theme=dark] :is(p,footer,dt,.due,.text-button,.weekday,.stats span,.progress-line,nav a,.password button){color:var(--dark-muted)}
+[data-theme=dark] :is(a,.eyebrow,.brand-dot){color:var(--dark-link)}
+[data-theme=dark] :is(input:not([type=file]),select,textarea,.secondary){color:#e6eee9;background:var(--dark-surface);border-color:var(--dark-border)}
+[data-theme=dark] input[readonly]{background:#26362e;color:var(--dark-muted)}
+[data-theme=dark] input::placeholder,[data-theme=dark] textarea::placeholder{color:#a2b5a9;opacity:1}
+[data-theme=dark] .primary{color:#10271c;background:#8bdfb9;border-color:#8bdfb9}
+[data-theme=dark] .primary:hover{background:#a7edcc}
+[data-theme=dark] :is(.study-form,.calendar-day){background:var(--dark-surface);color:#e6eee9}
+[data-theme=dark] .calendar-day.outside{background:#121b18;color:#a2b5a9}
+[data-theme=dark] :is(.calendar-day.today,.calendar-day[aria-pressed=true],.calendar-filters button[aria-pressed=true]){border-color:#8bdfb9}
+[data-theme=dark] :is(nav a.active,.calendar-day[aria-pressed=true],.calendar-filters button[aria-pressed=true],.avatar){background:#234536;color:#b8f1d3}
+[data-theme=dark] .notice{background:#234536;color:#c1f1d7}
+[data-theme=dark] :is(.notice.error,.delete-confirm){background:#452823;color:#ffd3ce}
+[data-theme=dark] :is(.danger,.overdue){color:#ffb8ae}
+[data-theme=dark] :is(.details,.study-list li,.stats,.deadline-list li,.module,.course-note,.file-preview,.focus-clock){border-color:var(--dark-border)}
+[data-theme=dark] .skip{background:#1c2923;color:#b8f1d3}
+[data-theme=dark] :focus-visible{outline-color:#9cebc5}
+[data-theme=dark] input[type=checkbox],[data-theme=dark] progress{accent-color:#8bdfb9}

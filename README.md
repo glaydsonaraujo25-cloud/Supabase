@@ -189,3 +189,11 @@ Execute `supabase/tests/certificates_access.sql` no SQL Editor para verificar is
 Upload e metadados não formam uma transação única: em uma falha de rede ambígua, o arquivo enviado é preservado para evitar apagar um upload já associado a um registro. Podem existir arquivos privados órfãos; sua limpeza administrativa deve confirmar antes que não há registro associado. Uma falha de limpeza após excluir um registro é informada na tela.
 
 A prévia de PDF depende do suporte do navegador; o download permanece disponível. Build, testes automatizados e policies foram verificados; esta atualização não teve teste visual em navegador real neste ambiente.
+
+## Exportação dos estudos
+
+Use **Exportar resultados (CSV)** em Cursos, Tarefas ou Certificados. O arquivo contém os resultados dos filtros atuais, com cabeçalhos em português, separador ponto e vírgula e UTF-8. Na importação em uma planilha, selecione esse separador. Campos que poderiam executar fórmulas são tratados como texto. O relatório de certificados contém metadados, sem arquivos, caminhos privados ou identificadores de usuário.
+
+No Calendário, **Exportar prazos (ICS)** baixa as tarefas pendentes com data da visualização atual. Cada prazo vira um evento de dia inteiro, no formato [iCalendar RFC 5545](https://www.rfc-editor.org/rfc/rfc5545). Importe o arquivo usando a opção de importação de seu calendário. É uma cópia pontual: alterações posteriores e exclusões no app não atualizam o calendário externo. Reimportações podem duplicar eventos conforme o serviço utilizado.
+
+As exportações são geradas no navegador com os registros já carregados para a conta atual. Respeitam o limite de resultados configurado na API; não constituem backup completo da conta. Não exigem novas tabelas, permissões ou credenciais. A proteção das rotas e as policies existentes continuam valendo.

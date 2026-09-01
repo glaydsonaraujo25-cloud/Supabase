@@ -156,3 +156,21 @@ Clique no nome de um curso em `/courses` para abrir `/courses/:courseId`.
 Aplique `supabase/course_details_setup.sql` uma única vez após `study_setup.sql` em um novo projeto. Já aplicado no projeto conectado. A view `study_courses` usa `security_invoker=true`, respeita RLS e calcula o progresso no momento da consulta, inclusive nas listas e no dashboard. A tabela `courses.progress` guarda apenas o percentual manual. As chaves estrangeiras compostas garantem que curso, módulo, aula e proprietário sejam consistentes. Visitantes não têm permissão de leitura e usuários não podem alterar proprietários, IDs ou vínculos existentes.
 
 Validação: 39 testes, TypeScript e build aprovados. `supabase/tests/course_details_access.sql` executado com rollback comprova cálculo automático, retorno ao manual, isolamento de proprietários, vínculo protegido e exclusão em cascata. Interface verificada em DOM simulado; sem inspeção visual de navegador real nesta entrega. O advisory de proteção contra senhas vazadas continua sendo uma configuração de Auth: https://supabase.com/docs/guides/auth/password-security#password-strength-and-leaked-password-protection
+
+## hCaptcha em cadastro, login e recuperação
+
+Os três formulários exigem a conclusão do hCaptcha e enviam `options.captchaToken` ao Supabase Auth. Tokens são apagados após cada tentativa e ao expirar; erro de carregamento bloqueia o envio e oferece recarregar a verificação. A aplicação não chama `siteverify` no navegador e não guarda o token.
+
+A sitekey pública fornecida para este projeto está em `src/components/Captcha.tsx`. Pode ser substituída com `VITE_HCAPTCHA_SITE_KEY` no ambiente de build. A chave secreta nunca deve ir para variáveis VITE, código, README ou GitHub.
+
+**Ativação necessária no servidor (não efetuada pela integração de código):**
+
+1. No hCaptcha, registre o hostname real `supabase-two-ivory.vercel.app` no site correspondente à sitekey; inclua outros domínios usados para login, se necessário. O modo Demo da página de exemplos não protege a aplicação. Não use sitekeys de teste em produção.
+2. Se uma chave secreta foi exposta em prints, substitua-a no painel do hCaptcha.
+3. No Supabase, abra Authentication / Bot and Abuse Protection (a localização pode variar), ative CAPTCHA protection, selecione hCaptcha e salve a chave secreta atual diretamente no painel.
+4. Teste login, cadastro e recuperação resolvendo o desafio manualmente. Sem CAPTCHA protection no Supabase, o bloqueio da interface sozinho não impede chamadas diretas à API.
+5. Se trocar a sitekey, atualize VITE_HCAPTCHA_SITE_KEY na Vercel e publique novamente. Não é necessário mudar a sitekey apenas porque a chave secreta foi substituída, salvo orientação do provedor.
+
+Referência: https://supabase.com/docs/guides/auth/auth-captcha
+
+44 testes automatizados e build aprovados. Os desafios são simulados nos testes; a validação real de hCaptcha e Supabase depende da ativação no painel e de um teste humano. CAPTCHA não remove limites de envio de e-mails nem substitui SMTP.

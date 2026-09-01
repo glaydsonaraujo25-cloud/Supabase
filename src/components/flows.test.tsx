@@ -7,6 +7,7 @@ vi.mock('../lib/supabase', () => ({ configured: true, callbackFailed: true, call
 vi.mock('../contexts/AuthContext', () => ({ useAuth: () => mocks.auth }))
 import { Avatar } from './UI'
 import Login from '../pages/Login'
+vi.mock('@hcaptcha/react-hcaptcha', () => ({ default: ({ onVerify }: { onVerify: (token: string) => void }) => <button type="button" onClick={() => onVerify('captcha-test')}>Resolver CAPTCHA</button> }))
 import App from '../App'
 import Register from '../pages/Register'
 afterEach(() => { cleanup(); vi.clearAllMocks() })
@@ -24,6 +25,7 @@ it('shows login errors after arriving through an expired link', async () => {
   expect(screen.getByRole('alert').textContent).toContain('link')
   fireEvent.change(screen.getByLabelText('E-mail'), { target: { value: 'ana@example.com' } })
   fireEvent.change(screen.getByLabelText('Senha'), { target: { value: 'wrongpass' } })
+  fireEvent.click(screen.getByText('Resolver CAPTCHA'))
   fireEvent.click(screen.getByRole('button', { name: 'Entrar' }))
   expect(await screen.findByText('E-mail ou senha incorretos.')).toBeTruthy()
 })
@@ -39,6 +41,7 @@ function fillRegistration() {
   fireEvent.change(screen.getByLabelText('E-mail'), { target: { value: 'ana@example.com' } })
   fireEvent.change(screen.getByLabelText('Senha'), { target: { value: 'testpass123' } })
   fireEvent.change(screen.getByLabelText('Confirmar senha'), { target: { value: 'testpass123' } })
+  fireEvent.click(screen.getByText('Resolver CAPTCHA'))
 }
 it.each([
   { data: { user: { identities: [] }, session: null }, error: null },
@@ -59,6 +62,8 @@ it.each([
   fireEvent.change(screen.getByLabelText('E-mail'), { target: { value: ' ANA@example.com ' } })
   expect(button.disabled).toBe(true)
   fireEvent.change(screen.getByLabelText('E-mail'), { target: { value: 'outra@example.com' } })
+  expect(button.disabled).toBe(true)
+  fireEvent.click(screen.getByText('Resolver CAPTCHA'))
   expect(button.disabled).toBe(false)
 })
 it('still advances valid new registrations to confirmation instructions', async () => {

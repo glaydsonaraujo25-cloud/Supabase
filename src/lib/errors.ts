@@ -2,6 +2,7 @@ export function friendlyError(error: unknown): string {
   const e = error as { code?: string; message?: string; status?: number }
   if (e?.message === 'invalid_image') return 'Não foi possível abrir essa imagem. Escolha outra foto JPG, PNG ou WebP.'
   switch (e?.code) {
+    case 'captcha_failed': return 'A verificação de segurança falhou. Confirme novamente que você é uma pessoa.'
     case 'invalid_credentials': return 'E-mail ou senha incorretos.'
     case 'email_not_confirmed': return 'Confirme seu e-mail antes de entrar. Verifique também a pasta de spam.'
     case 'user_already_exists': case 'email_exists': return 'Este e-mail já está cadastrado. Entre na sua conta ou recupere sua senha.'
